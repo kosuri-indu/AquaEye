@@ -4,6 +4,15 @@ body {
     background-color: white;
 }
 
+#file-input {
+    margin-top: 10px;
+}
+
+.media-box p {
+    margin: 0;
+}
+
+/* Media Section */
 .media-section {
     display: flex;
     flex-direction: column;
@@ -29,6 +38,33 @@ body {
     margin-top: 10px;
 }
 
-.media-box p {
-    margin: 0;
+#upload-button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#upload-button:hover {
+    background-color: #0056b3;
+}
+
+.uploaded-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+    width: 100%;
+}
+
+.preview-item {
+    max-width: 150px;
+    max-height: 150px;
+    border: 2px solid white;
+    border-radius: 5px;
+    margin: 5px;
 }
