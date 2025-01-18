@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plastic Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        <ul class="nav-links">
+            <li><a href="#problem">The Problem</a></li>
+            <li><a href="#detection">Plastic Detection</a></li>
+            <li><a href="#education">Education</a></li>
+        </ul>
+    </nav>
+
+    <!-- Add Media Section -->
+    <div class="media-section">
+        <div class="media-box">
+            <span>+</span>
+            <p>Add Media</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Connect with us:</p>
+            <!-- <div class="social-links">
+                <a href="#"><img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram"></a>
+                <a href="#"><img src="{{ url_for('static', filename='images/youtube-icon.png') }}" alt="YouTube"></a>
+            </div> -->
+            <p>Contact Us</p>
+            <p>aquaeye@gmail.com</p>
+            <p>Every piece of plastic you pick up is one less piece in nature.</p>
+        </div>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="footer-logo">
+    </footer>
+</body>
+</html>
