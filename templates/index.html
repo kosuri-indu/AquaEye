@@ -3,29 +3,5 @@
 {% block title %}Add Media{% endblock %}
 
 {% block content %}
-<div class="media-section">
-    <div class="media-box" id="drop-area">
-        <form id="upload-form" action="/" method="POST" enctype="multipart/form-data">
-            <input type="file" id="file-input" name="file" accept="image/*,video/*" onchange="showUploadButton()">
-            <button type="submit" id="upload-button">Upload</button>
-        </form>
-        <div class="uploaded-preview">
-            {% for file in files %}
-                {% if file.endswith(('.png', '.jpg', '.jpeg', '.gif')) %}
-                    <img src="{{ url_for('static', filename='uploads/' + file) }}" alt="Uploaded Image" class="preview-item">
-                {% elif file.endswith(('.mp4', '.avi', '.mov', '.mkv')) %}
-                    <video src="{{ url_for('static', filename='uploads/' + file) }}" controls class="preview-item"></video>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-</div>
 
-<script>
-    function showUploadButton() {
-        document.getElementById('upload-button').style.display = 'block';
-    }
-
-    document.getElementById('upload-button').style.display = 'none';
-</script>
 {% endblock %}
