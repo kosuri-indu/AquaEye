@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-from pages import detection, education  # Import the education module
+from pages import detection, education, problem  # Import the problem module
 
 # Initialize the app with a Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
@@ -49,7 +49,7 @@ def display_page(pathname):
     if pathname == '/detection':
         return detection.layout
     elif pathname == '/problem':
-        return html.Div([html.H1("The Problem"), html.P("Content for The Problem page goes here.")])
+        return problem.layout  # Use the layout defined in problem.py
     elif pathname == '/education':
         return education.layout  # Use the layout defined in education.py
     else:
