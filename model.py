@@ -1,3 +1,5 @@
+# model.py
+
 import base64
 import pathlib
 import cv2
@@ -14,7 +16,7 @@ CLIENT1_API_KEY = os.getenv('CLIENT1_API_KEY')
 CLIENT2_API_KEY = os.getenv('CLIENT2_API_KEY')
 
 # Configuration for the HTTP clients
-custom_configuration = InferenceConfiguration(confidence_threshold=0.5, iou_threshold=0.4)
+custom_configuration = InferenceConfiguration(confidence_threshold=0.4, iou_threshold=0.4)
 CLIENT1 = InferenceHTTPClient(
     api_url="https://detect.roboflow.com",
     api_key=CLIENT1_API_KEY,
@@ -35,8 +37,8 @@ print("YOLO model loaded successfully.")
 
 # Define colors for different sources
 colors = {
-    'yolo': (255, 0, 0),  # Blue
-    'seascanner': (0, 0, 255),  # Red
+    'yolo': (255, 0, 0),  # Red
+    'seascanner': (0, 100, 0),  # Dark Green
     'neuralocean': (0, 0, 0)  # Black
 }
 
@@ -107,16 +109,16 @@ def process_image(contents):
     decoded = base64.b64decode(content_string)
     image = cv2.imdecode(np.frombuffer(decoded, np.uint8), cv2.IMREAD_COLOR)
 
-    # Save the image to a temporary file
-    temp_image_path = 'temp_image.jpg'
-    cv2.imwrite(temp_image_path, image)
-
     # Convert the frame for YOLO inference
     frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     pil_img = Image.fromarray(frame_rgb)
 
     # Run YOLO inference
     yolo_results = model(pil_img)
+
+    # Save the image to a temporary file
+    temp_image_path = 'temp_image.jpg'
+    cv2.imwrite(temp_image_path, image)
 
     # Run HTTP inference for SeaScanner model
     with CLIENT1.use_configuration(custom_configuration):
@@ -139,7 +141,118 @@ def process_image(contents):
     # Combine the results from all models
     final_boxes = combine_results(yolo_results, seascanner_results, results)
 
-    return image, final_boxes
+    # Draw the combined results on the image
+    for box in final_boxes:
+        x1, y1, x2, y2 = map(int, box['box'])
+        label = f"{box['class']} {box['conf']:.2f}"
+        color = colors[box['source']]
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
+        
+        # Calculate text size
+        (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1)
+        
+        # Draw filled rectangle behind the label
+        cv2.rectangle(image, (x1, y1 - h - 5), (x1 + w, y1), color, -1)
+        
+        # Draw the label text
+        cv2.putText(image, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
+    # Convert the image back to RGB format
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    return image_rgb, final_boxes
+
+def process_video(contents, skip_frames=5):
+    # Decode the video
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    video_path = 'temp_video.mp4'
+    with open(video_path, 'wb') as f:
+        f.write(decoded)
+
+    # Process the video frame by frame
+    cap = cv2.VideoCapture(video_path)
+    frames = []
+    frame_count = 0
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Skip frames
+        if frame_count % skip_frames != 0:
+            frame_count += 1
+            continue
+
+        try:
+            # Convert the frame for YOLO inference
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            pil_img = Image.fromarray(frame_rgb)
+
+            # Run YOLO inference
+            yolo_results = model(pil_img)
+
+            # Run HTTP inference for SeaScanner model
+            with CLIENT1.use_configuration(custom_configuration):
+                seascanner_results = CLIENT1.infer(frame, model_id="seascanner/4")
+
+            # Run inference for NeuralOcean model
+            results = {}
+            for workflow_id in ["neuralocean"]:
+                response = CLIENT2.run_workflow(
+                    workspace_name="trashdetection-eihzd",
+                    workflow_id=workflow_id,
+                    images={"image": frame},
+                    use_cache=True
+                )
+                if isinstance(response, list) and len(response) > 0:
+                    results[workflow_id] = response[0]  # Take the first element if it's a list
+                else:
+                    results[workflow_id] = response  # Otherwise, store as-is
+
+            # Combine the results from all models
+            final_boxes = combine_results(yolo_results, seascanner_results, results)
+
+            # Draw the combined results on the frame
+            for box in final_boxes:
+                x1, y1, x2, y2 = map(int, box['box'])
+                label = f"{box['class']} {box['conf']:.2f}"
+                color = colors[box['source']]
+                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                
+                # Calculate text size
+                (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1)
+                
+                # Draw filled rectangle behind the label
+                cv2.rectangle(frame, (x1, y1 - h - 5), (x1 + w, y1), color, -1)
+                
+                # Draw the label text
+                cv2.putText(frame, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
+            # Convert the frame back to RGB format
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frames.append(frame_rgb)
+        except Exception as e:
+            print(f"Error processing frame {frame_count}: {e}")
+
+        frame_count += 1
+
+    cap.release()
+
+    # Ensure there are frames to process
+    if not frames:
+        raise ValueError("No frames were processed from the video.")
+
+    # Save the processed video
+    processed_video_path = 'processed_video.mp4'
+    out = cv2.VideoWriter(processed_video_path, cv2.VideoWriter_fourcc(*'mp4v'), 20.0, (frames[0].shape[1], frames[0].shape[0]))
+    for frame in frames:
+        # Convert the frame back to BGR format before writing to the video file
+        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        out.write(frame_bgr)
+    out.release()
+
+    return processed_video_path
 
 # Restore pathlib
 pathlib.PosixPath = temp
