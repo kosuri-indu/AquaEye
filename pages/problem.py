@@ -4,7 +4,6 @@ layout = html.Div([
     # Video container with text overlay and gradient
     html.Div(
         [
-            # Video with reduced height
             html.Video(
                 src="https://assets.theoceancleanup.com/videos/home-header-720p-v3.webm",
                 poster="https://assets.theoceancleanup.com/videos/home-header-poster-v2.jpg",
@@ -70,27 +69,58 @@ layout = html.Div([
         style={'position': 'relative', 'textAlign': 'left'}
     ),
 
-    # Feature Section (Equal-sized Cards)
+    # Heading above feature cards
+    html.H2("Key Features",
+            style={
+                'color': '#01cbe1',
+                'textAlign': 'center',
+                'fontSize': '50px',
+                'marginTop': '30px',
+                'padding-top': '30px',
+                'padding-bottom': '30px',
+                'fontFamily': 'Georgia, serif'
+            }),
+
+    # Feature Section (2x3 Grid Layout)
     html.Div(
         [
             html.Div([
-                html.Img(src="static/images/highdetect.png", className="feature-img"),
-                html.Div("High Precision Detection", className="feature-text")
-            ], className="feature-card"),
+                html.Div([
+                    html.Img(src="static/images/highdetect.png", className="feature-img"),
+                    html.Div("High Precision Detection", className="feature-text")
+                ], className="feature-card"),
+
+                html.Div([
+                    html.Img(src="static/images/visuvalise.png", className="feature-img"),
+                    html.Div("Data Visualization", className="feature-text")
+                ], className="feature-card"),
+
+                html.Div([
+                    html.Img(src="static/images/marine.png", className="feature-img"),
+                    html.Div("Detection of Marine Life", className="feature-text")
+                ], className="feature-card"),
+            ], className="feature-row"),
 
             html.Div([
-                html.Img(src="static/images/visuvalise.png", className="feature-img"),
-                html.Div("Data Visualization", className="feature-text")
-            ], className="feature-card"),
+                html.Div([
+                    html.Img(src="static/images/low.png", className="feature-img"),
+                    html.Div("Detection in Low Visibility", className="feature-text")
+                ], className="feature-card"),
 
-            html.Div([
-                html.Img(src="static/images/realtime.png", className="feature-img"),
-                html.Div("Real-time Processing", className="feature-text")
-            ], className="feature-card"),
+                html.Div([
+                    html.Img(src="static/images/safety.png", className="feature-img"),
+                    html.Div("Safety Level Checker", className="feature-text")
+                ], className="feature-card"),
+
+                html.Div([
+                    html.Img(src="static/images/degradation.png", className="feature-img"),
+                    html.Div("Degradation Tracker", className="feature-text")
+                ], className="feature-card"),
+            ], className="feature-row"),
         ],
         style={
             'display': 'flex',
-            'justifyContent': 'space-evenly',  # Distribute cards equally
+            'flexDirection': 'column',  # Stack rows vertically
             'alignItems': 'center',
             'gap': '15px',
             'padding': '30px 0'
@@ -98,13 +128,19 @@ layout = html.Div([
     )
 ], style={'backgroundColor': '#003755', 'minHeight': '100vh'})  # Set full background color
 
-# CSS for feature cards (Equal sizes)
+# CSS for feature rows (Each row should have 3 items)
+feature_row_style = {
+    'display': 'flex',
+    'justifyContent': 'center',
+    'gap': '20px',  # Spacing between cards
+    'flexWrap': 'wrap'  # Ensures responsiveness
+}
+
 feature_card_style = {
-    'width': '300px',  # Ensure equal width
+    'width': '400px',  # Ensure equal width
     'height': '400px',
     'borderRadius': '10px',
     'overflow': 'hidden',
-    'position': 'relative',
     'boxShadow': '0px 4px 6px rgba(0, 0, 0, 0.2)',
     'display': 'flex',
     'flexDirection': 'column',
@@ -114,15 +150,14 @@ feature_card_style = {
 feature_img_style = {
     'width': '100%',
     'height': '80%',  # Adjust image height
-    'objectFit': 'cover',
-    'position': 'relative'
+    'objectFit': 'cover'
 }
 
 feature_text_style = {
     'width': '100%',
     'height': '20%',  # Text at bottom
     'padding': '15px',
-    'background': 'linear-gradient(to top, black, rgba(0, 0, 0, 0.6))',
+    'background': 'linear-gradient(to top, black, rgba(0, 0, 0, 0))',
     'color': 'white',
     'textAlign': 'center',
     'fontSize': '18px',
@@ -133,7 +168,11 @@ feature_text_style = {
 }
 
 # Apply styles dynamically
-for feature in layout.children[1].children:
-    feature.style = feature_card_style
-    feature.children[0].style = feature_img_style
-    feature.children[1].style = feature_text_style
+for row in layout.children[2].children:
+    if isinstance(row, html.Div):
+        row.style = feature_row_style
+        for feature in row.children:
+            if isinstance(feature, html.Div) and len(feature.children) == 2:
+                feature.style = feature_card_style
+                feature.children[0].style = feature_img_style
+                feature.children[1].style = feature_text_style

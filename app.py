@@ -52,10 +52,7 @@ def display_page(pathname):
     elif pathname == '/education':
         return education.layout
     else:
-        return html.Div([
-            html.H1("Home"),
-            html.P("Welcome to AquaEye.")
-        ])
+        return problem.layout  # Default to problem page
 
 detection.register_callbacks(app)
 
