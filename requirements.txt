@@ -1,9 +1,0 @@
-dash
-dash-bootstrap-components
-opencv-python
-plotly
-pillow
-inference_sdk
-python-dotenv
-numpy
-torch
