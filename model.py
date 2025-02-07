@@ -122,7 +122,7 @@ def process_image(contents):
 
     # Run HTTP inference for SeaScanner model
     with CLIENT1.use_configuration(custom_configuration):
-        seascanner_results = CLIENT1.infer(temp_image_path, model_id="seascanner/4")
+        seascanner_results = CLIENT1.infer(temp_image_path, model_id="seascanner/3")
 
     # Run inference for NeuralOcean model
     results = {}
@@ -194,7 +194,7 @@ def process_video(contents, skip_frames=5):
 
             # Run HTTP inference for SeaScanner model
             with CLIENT1.use_configuration(custom_configuration):
-                seascanner_results = CLIENT1.infer(frame, model_id="seascanner/4")
+                seascanner_results = CLIENT1.infer(frame, model_id="seascanner/3")
 
             # Run inference for NeuralOcean model
             results = {}

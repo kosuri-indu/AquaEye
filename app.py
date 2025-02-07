@@ -5,7 +5,6 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output
 from pages import detection, education, problem  # Import the problem module
-
 # Initialize the app with a Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 
@@ -22,7 +21,7 @@ navbar = dbc.Navbar(
         # Navigation links on the right
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink("The Problem", href="/problem")),
+                dbc.NavItem(dbc.NavLink("The Problem", href="/")),
                 dbc.NavItem(dbc.NavLink("Debris Detection", href="/detection")),
                 dbc.NavItem(dbc.NavLink("Education", href="/education")),
             ],

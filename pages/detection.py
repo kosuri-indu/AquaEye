@@ -11,32 +11,32 @@ import plotly.graph_objs as go
 
 # Define the layout for the detection page
 layout = html.Div([
-    html.H2("Debris Detection"),
+    html.H2("Underwater Debris Detection", style={'textAlign': 'center', 'marginTop': '8rem', 'marginBottom': '4rem', 'fontWeight': 'bold'}),
     
     # File Upload Component with plus symbol
     html.Div([
         dcc.Upload(
             id='upload-data',
             children=html.Div([
-                html.H3("+", style={'fontSize': '50px', 'marginBottom': '10px'}),
+                html.H3("+", style={'fontSize': '50px','marginBottom': '10px'}),
             ], style={
                 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center', 'height': '100%'
             }),
             style={
-                'width': '95.5%', 'height': '20rem', 'lineHeight': '60px',
+                'width': '60%', 'height': '15rem', 'lineHeight': '60px',
                 'borderWidth': '2px', 'borderStyle': 'dashed', 'borderRadius': '10px',  
-                'textAlign': 'center', 'margin': '7rem 2rem 2rem 2rem', 'padding': '20px', 
-                'backgroundColor': '#f8f9fa'
+                'textAlign': 'center', 'margin': '0 auto', 'padding': '20px', 
+                'backgroundColor': '#333333', 'color': '#ffffff'
             },
             multiple=False  # Allow only one file at a time
         ),
-    ], style={'textAlign': 'center'}),
+    ], style={'textAlign': 'center', 'marginBottom': '20px'}),
     
     # Hidden div to store filename state
     dcc.Store(id='stored-filename'),
     
     # Output section
-    html.Div(id='output-file-info', style={'marginTop': '20px', 'fontWeight': 'bold', 'textAlign': 'center'}),
+    html.Div(id='output-file-info', style={'marginTop': '20px', 'fontWeight': 'bold', 'textAlign': 'center', 'color': '#ffffff'}),
     
     # Display uploaded image or video
     html.Div(id='output-file-display', style={'marginTop': '20px', 'textAlign': 'center'}),
@@ -48,32 +48,60 @@ layout = html.Div([
     html.Div(
         id='dashboard-container',
         children=[
-            # Individual object class count graph (conditionally displayed)
-            html.H1("Dashboard", style={'fontSize': '50px', 'marginBottom': '20px'}),
-
+            # Row 1
             html.Div(
-                id='individual-class-graph-container',
                 children=[
-                    dcc.Graph(id='individual-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#f0f0f0', 'padding': '10px'})
+                    # Individual object class count graph (conditionally displayed)
+                    html.Div(
+                        id='individual-class-graph-container',
+                        children=[
+                            dcc.Graph(id='individual-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                        ],
+                        style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                    ),
+                    
+                    # Categorized object class count graph
+                    html.Div(
+                        id='categorized-class-graph-container',
+                        children=[
+                            dcc.Graph(id='categorized-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                        ],
+                        style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                    )
                 ],
-                style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#d3d3d3', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
             ),
             
-            # Second Dashboard (Categorized graph) below the first one
+            # Row 2
             html.Div(
-                id='categorized-class-graph-container',
                 children=[
-                    dcc.Graph(id='categorized-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#f0f0f0', 'padding': '10px'})
+                    # Safety Gauge
+                    html.Div(
+                        id='gauge-container',
+                        children=[
+                            dcc.Graph(id='safety-gauge', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                        ],
+                        style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                    ),
+                    
+                    # Degradation Time Graph
+                    html.Div(
+                        id='degradation-time-graph-container',
+                        children=[
+                            dcc.Graph(id='degradation-time-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                        ],
+                        style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                    )
                 ],
-                style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#d3d3d3', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
             )
         ],
-        style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
+        style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap', 'backgroundColor': '#333333', 'padding': '20px', 'borderRadius': '12px'}
     ),
 
     # Spacer after dashboards
     html.Div(style={'height': '40px'})
-])
+], style={'backgroundColor': 'white', 'padding': '20px'})
 
 # Categories
 animals = ['coral', 'crab', 'dolphin', 'fish', 'jellyfish', 'narwhal', 'octopus', 'sea-horse', 'sea-turtle', 'seal', 'shark', 'shrimp', 'star-fish', 'sting-ray', 'whale']
@@ -82,132 +110,11 @@ plastic = ['pbottle', 'plastic', 'pbag', 'gbottle']
 medical_waste = ['glove', 'syringe', 'bandage', 'mask']  # New category for medical waste
 miscellaneous = ['sunglasses', 'rod', 'rare_item']  # Rare or miscellaneous items
 
-# Callback to detect file type and display the file
-def register_callbacks(app):
-    @app.callback(
-        Output('stored-filename', 'data'),
-        Input('upload-data', 'filename')
-    )
-    def store_filename(filename):
-        return filename if filename else ""
-    
-    @app.callback(
-        [Output('output-file-info', 'children'),
-         Output('output-file-display', 'children'),
-         Output('individual-class-count-graph', 'figure'),
-         Output('categorized-class-count-graph', 'figure'),
-         Output('individual-class-graph-container', 'style'),
-         Output('categorized-class-graph-container', 'style')],
-        [Input('upload-data', 'contents'),
-         State('upload-data', 'filename')]
-    )
-    def detect_file_type(contents, filename):
-        if not contents:
-            return "No file uploaded yet.", "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}  # Hide both graph containers
-        
-        ext = os.path.splitext(filename)[1].lower()
-        file_type = ""
-        display_component = None
-        
-        if ext in ['.jpg', '.jpeg', '.png']:
-            file_type = "Image"
-            image, final_boxes = process_image(contents)
-            # Convert the image to RGB format for Dash
-            image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            _, buffer = cv2.imencode('.jpg', image_rgb)
-            image_encoded = base64.b64encode(buffer).decode('utf-8')
-            img_src = f'data:image/jpeg;base64,{image_encoded}'
-            display_component = html.Img(src=img_src, style={'maxWidth': '100%', 'height': 'auto'})
-        elif ext in ['.mp4']:
-            file_type = "Video"
-            try:
-                processed_video_path = process_video(contents, skip_frames=5)  # Adjust skip_frames as needed
-                with open(processed_video_path, 'rb') as f:
-                    video_encoded = base64.b64encode(f.read()).decode('utf-8')
-                video_src = f'data:video/mp4;base64,{video_encoded}'
-                display_component = html.Video(src=video_src, controls=True, style={'maxWidth': '100%', 'height': 'auto'})
-            except ValueError as e:
-                return str(e), "", go.Figure(), go.Figure# pages/detection.py
-
-import cv2
-import dash
-import dash_bootstrap_components as dbc
-from dash import dcc, html, Output, Input, State
-import os
-import base64
-from model import process_image, process_video
-import plotly.graph_objs as go
-
-# Define the layout for the detection page
-layout = html.Div([
-    html.H2("Debris Detection"),
-    
-    # File Upload Component with plus symbol
-    html.Div([
-        dcc.Upload(
-            id='upload-data',
-            children=html.Div([
-                html.H3("+", style={'fontSize': '50px', 'marginBottom': '10px'}),
-            ], style={
-                'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center', 'height': '100%'
-            }),
-            style={
-                'width': '95.5%', 'height': '20rem', 'lineHeight': '60px',
-                'borderWidth': '2px', 'borderStyle': 'dashed', 'borderRadius': '10px',  
-                'textAlign': 'center', 'margin': '7rem 2rem 2rem 2rem', 'padding': '20px', 
-                'backgroundColor': '#f8f9fa'
-            },
-            multiple=False  # Allow only one file at a time
-        ),
-    ], style={'textAlign': 'center'}),
-    
-    # Hidden div to store filename state
-    dcc.Store(id='stored-filename'),
-    
-    # Output section
-    html.Div(id='output-file-info', style={'marginTop': '20px', 'fontWeight': 'bold', 'textAlign': 'center'}),
-    
-    # Display uploaded image or video
-    html.Div(id='output-file-display', style={'marginTop': '20px', 'textAlign': 'center'}),
-    
-    # Spacer before dashboards
-    html.Div(style={'height': '40px'}),
-
-    # Container for all dashboards
-    html.Div(
-        id='dashboard-container',
-        children=[
-            # Individual object class count graph (conditionally displayed)
-            html.Div(
-                id='individual-class-graph-container',
-                children=[
-                    dcc.Graph(id='individual-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#f0f0f0', 'padding': '10px'})
-                ],
-                style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#d3d3d3', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
-            ),
-            
-            # Second Dashboard (Categorized graph) below the first one
-            html.Div(
-                id='categorized-class-graph-container',
-                children=[
-                    dcc.Graph(id='categorized-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#f0f0f0', 'padding': '10px'})
-                ],
-                style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#d3d3d3', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
-            )
-        ],
-        style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
-    ),
-
-    # Spacer after dashboards
-    html.Div(style={'height': '40px'})
-])
-
-# Categories
-animals = ['coral', 'crab', 'dolphin', 'fish', 'jellyfish', 'narwhal', 'octopus', 'sea-horse', 'sea-turtle', 'seal', 'shark', 'shrimp', 'star-fish', 'sting-ray', 'whale']
-industrial_waste = ['can', 'cellphone', 'electronics', 'gbottle', 'glove', 'metal', 'misc', 'net', 'pbag', 'pbottle', 'plastic', 'rod', 'sunglasses', 'tire']
-plastic = ['trash_plastic','pbottle', 'plastic', 'pbag', 'gbottle']
-medical_waste = ['glove', 'syringe', 'bandage', 'mask']  # New category for medical waste
-miscellaneous = ['sunglasses', 'rod', 'rare_item']  # Rare or miscellaneous items
+degradation_times = {
+    'mask': 450, 'can': 200, 'cellphone': 1000, 'electronics': 1000, 'gbottle': 10000,
+    'glove': 50, 'metal': 500, 'misc': 100, 'net': 600, 'pbag': 20,
+    'pbottle': 450, 'plastic': 450, 'rod': 500, 'sunglasses': 1000, 'tire': 2000, 'trash_plastic': 450
+}
 
 # Callback to detect file type and display the file
 def register_callbacks(app):
@@ -224,13 +131,17 @@ def register_callbacks(app):
          Output('individual-class-count-graph', 'figure'),
          Output('categorized-class-count-graph', 'figure'),
          Output('individual-class-graph-container', 'style'),
-         Output('categorized-class-graph-container', 'style')],
+         Output('categorized-class-graph-container', 'style'),
+         Output('safety-gauge', 'figure'),  # New output for gauge meter
+         Output('gauge-container', 'style'),
+         Output('degradation-time-graph', 'figure'),
+         Output('degradation-time-graph-container', 'style')],
         [Input('upload-data', 'contents'),
          State('upload-data', 'filename')]
     )
     def detect_file_type(contents, filename):
         if not contents:
-            return "No file uploaded yet.", "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}  # Hide both graph containers
+            return ("No file uploaded yet.", "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}, go.Figure(), {'display': 'none'}, go.Figure(), {'display': 'none'})  # Hide all containers
         
         ext = os.path.splitext(filename)[1].lower()
         file_type = ""
@@ -244,7 +155,7 @@ def register_callbacks(app):
             _, buffer = cv2.imencode('.jpg', image_rgb)
             image_encoded = base64.b64encode(buffer).decode('utf-8')
             img_src = f'data:image/jpeg;base64,{image_encoded}'
-            display_component = html.Img(src=img_src, style={'maxWidth': '100%', 'height': 'auto'})
+            display_component = html.Img(src=img_src, style={'maxWidth': '100%', 'height': 'auto', 'maxHeight': '500px'})
         elif ext in ['.mp4']:
             file_type = "Video"
             try:
@@ -252,11 +163,11 @@ def register_callbacks(app):
                 with open(processed_video_path, 'rb') as f:
                     video_encoded = base64.b64encode(f.read()).decode('utf-8')
                 video_src = f'data:video/mp4;base64,{video_encoded}'
-                display_component = html.Video(src=video_src, controls=True, style={'maxWidth': '100%', 'height': 'auto'})
+                display_component = html.Video(src=video_src, controls=True, style={'maxWidth': '100%', 'height': 'auto', 'maxHeight': '500px'})
             except ValueError as e:
-                return str(e), "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}  # Hide both graph containers
+                return str(e), "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}, go.Figure(), {'display': 'none'}, go.Figure(), {'display': 'none'}  # Hide all containers
         else:
-            return "Unsupported file format.", "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}  # Hide both graph containers
+            return "Unsupported file format.", "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}, go.Figure(), {'display': 'none'}, go.Figure(), {'display': 'none'}  # Hide all containers
         
         # Update individual class counts for the bar chart
         class_counts = {}
@@ -284,16 +195,61 @@ def register_callbacks(app):
             if label in miscellaneous:
                 categorized_counts['Miscellaneous'] += count
 
+        total_detections = len(final_boxes)
         # Create the individual class count bar chart
         individual_data = [go.Bar(x=list(class_counts.keys()), y=list(class_counts.values()))]
-        individual_figure = {'data': individual_data, 'layout': go.Layout(title='Object Class Counts')}
+        individual_figure = {'data': individual_data, 'layout': go.Layout(title='Object Class Counts', paper_bgcolor='#444444', plot_bgcolor='#444444', font=dict(color='#ffffff'))}
 
         # Create the categorized class count bar chart
         categorized_data = [go.Bar(x=list(categorized_counts.keys()), y=list(categorized_counts.values()))]
-        categorized_figure = {'data': categorized_data, 'layout': go.Layout(title='Categorized Object Counts')}
+        categorized_figure = {'data': categorized_data, 'layout': go.Layout(title='Categorized Object Counts', paper_bgcolor='#444444', plot_bgcolor='#444444', font=dict(color='#ffffff'))}
 
-        return html.Div([
-            html.P(f"Uploaded {file_type}: {filename}", style={'fontSize': '18px', 'fontWeight': 'bold'}),
-        ]), display_component, individual_figure, categorized_figure, {'display': 'block'}, {'display': 'block'}  # Show both graph containers
+        # Update image info to include total detections
+        image_info = f"Processing image: {filename}\nTotal detections: {total_detections*10}%"
+        # Calculate debris percentage
+        debris_percentage = min(total_detections * 10, 100)  # Ensure it doesn't exceed 100%
+
+        # Determine safety level
+        if debris_percentage <= 30:
+            safety_status = "Safe"
+            gauge_color = "green"
+        elif debris_percentage <= 60:
+            safety_status = "Moderate"
+            gauge_color = "yellow"
+        elif debris_percentage <= 90:
+            safety_status = "Unsafe"
+            gauge_color = "orange"
+        else:
+            safety_status = "Hazardous"
+            gauge_color = "red"
+
+        # Create gauge meter figure
+        gauge_figure = go.Figure(
+            go.Indicator(
+                mode="gauge+number",
+                value=debris_percentage,
+                title={"text": f"Safety Level: {safety_status}"},
+                gauge={
+                    "axis": {"range": [0, 100]},
+                    "bar": {"color": gauge_color},
+                    "steps": [
+                        {"range": [0, 30], "color": "green"},
+                        {"range": [30, 60], "color": "yellow"},
+                        {"range": [60, 90], "color": "orange"},
+                        {"range": [90, 100], "color": "red"}
+                    ]
+                }
+            )
+        )
+        gauge_figure.update_layout(paper_bgcolor='#444444', font=dict(color='#ffffff'))
+
+        # Create degradation time bar chart
+        degradation_data = []
+        for item, count in class_counts.items():
+            degradation_time = degradation_times.get(item, 0)
+            degradation_data.append(go.Bar(x=[item], y=[degradation_time]))
+        degradation_figure = {'data': degradation_data, 'layout': go.Layout(title='Degradation Time of Detected Items', paper_bgcolor='#444444', plot_bgcolor='#444444', font=dict(color='#ffffff'))}
+
+        return image_info, display_component, individual_figure, categorized_figure, {'display': 'block'}, {'display': 'block'}, gauge_figure, {'display': 'block'}, degradation_figure, {'display': 'block'}  # Show all containers
 
 # Ensure to register the callbacks in app.py
