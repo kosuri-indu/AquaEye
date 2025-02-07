@@ -73,7 +73,7 @@ def combine_results(yolo_results, seascanner_results, neuralocean_results):
 
     # Process SeaScanner results
     for seascanner_box in seascanner_results['predictions']:
-        if seascanner_box['confidence'] > 0.45:
+        if seascanner_box['confidence'] > 0.4:
             combined_boxes.append({
                 'box': [seascanner_box['x'] - seascanner_box['width'] / 2, seascanner_box['y'] - seascanner_box['height'] / 2,
                         seascanner_box['x'] + seascanner_box['width'] / 2, seascanner_box['y'] + seascanner_box['height'] / 2],
