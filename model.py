@@ -1,5 +1,6 @@
 # model.py
 
+import time
 import base64
 import pathlib
 import cv2
@@ -9,6 +10,7 @@ import numpy as np
 from inference_sdk import InferenceHTTPClient, InferenceConfiguration
 import os
 import dotenv
+from ratelimit import limits, sleep_and_retry
 
 # Load the environment variables
 dotenv.load_dotenv()
@@ -71,13 +73,14 @@ def combine_results(yolo_results, seascanner_results, neuralocean_results):
 
     # Process SeaScanner results
     for seascanner_box in seascanner_results['predictions']:
-        combined_boxes.append({
-            'box': [seascanner_box['x'] - seascanner_box['width'] / 2, seascanner_box['y'] - seascanner_box['height'] / 2,
-                    seascanner_box['x'] + seascanner_box['width'] / 2, seascanner_box['y'] + seascanner_box['height'] / 2],
-            'conf': seascanner_box['confidence'],
-            'class': seascanner_box['class'],
-            'source': 'seascanner'
-        })
+        if seascanner_box['confidence'] > 0.4:
+            combined_boxes.append({
+                'box': [seascanner_box['x'] - seascanner_box['width'] / 2, seascanner_box['y'] - seascanner_box['height'] / 2,
+                        seascanner_box['x'] + seascanner_box['width'] / 2, seascanner_box['y'] + seascanner_box['height'] / 2],
+                'conf': seascanner_box['confidence'],
+                'class': seascanner_box['class'],
+                'source': 'seascanner'
+            })
 
     # Process NeuralOcean results with class mapping
     class_mapping = {"0": "trash_plastics", "1": "living_beings"}
@@ -121,22 +124,30 @@ def process_image(contents):
     cv2.imwrite(temp_image_path, image)
 
     # Run HTTP inference for SeaScanner model
-    with CLIENT1.use_configuration(custom_configuration):
-        seascanner_results = CLIENT1.infer(temp_image_path, model_id="seascanner/3")
+    try:
+        with CLIENT1.use_configuration(custom_configuration):
+            seascanner_results = CLIENT1.infer(temp_image_path, model_id="seascanner/3")
+    except Exception as e:
+        print(f"Error calling SeaScanner API: {e}")
+        seascanner_results = {'predictions': []}
 
     # Run inference for NeuralOcean model
     results = {}
     for workflow_id in ["neuralocean"]:
-        response = CLIENT2.run_workflow(
-            workspace_name="trashdetection-eihzd",
-            workflow_id=workflow_id,
-            images={"image": temp_image_path},
-            use_cache=True
-        )
-        if isinstance(response, list) and len(response) > 0:
-            results[workflow_id] = response[0]  # Take the first element if it's a list
-        else:
-            results[workflow_id] = response  # Otherwise, store as-is
+        try:
+            response = CLIENT2.run_workflow(
+                workspace_name="trashdetection-eihzd",
+                workflow_id=workflow_id,
+                images={"image": temp_image_path},
+                use_cache=True
+            )
+            if isinstance(response, list) and len(response) > 0:
+                results[workflow_id] = response[0]  # Take the first element if it's a list
+            else:
+                results[workflow_id] = response  # Otherwise, store as-is
+        except Exception as e:
+            print(f"Error calling NeuralOcean API: {e}")
+            results[workflow_id] = {'predictions': []}
 
     # Combine the results from all models
     final_boxes = combine_results(yolo_results, seascanner_results, results)
@@ -193,22 +204,30 @@ def process_video(contents, skip_frames=5):
             yolo_results = model(pil_img)
 
             # Run HTTP inference for SeaScanner model
-            with CLIENT1.use_configuration(custom_configuration):
-                seascanner_results = CLIENT1.infer(frame, model_id="seascanner/3")
+            try:
+                with CLIENT1.use_configuration(custom_configuration):
+                    seascanner_results = CLIENT1.infer(frame, model_id="seascanner/3")
+            except Exception as e:
+                print(f"Error calling SeaScanner API: {e}")
+                seascanner_results = {'predictions': []}
 
             # Run inference for NeuralOcean model
             results = {}
             for workflow_id in ["neuralocean"]:
-                response = CLIENT2.run_workflow(
-                    workspace_name="trashdetection-eihzd",
-                    workflow_id=workflow_id,
-                    images={"image": frame},
-                    use_cache=True
-                )
-                if isinstance(response, list) and len(response) > 0:
-                    results[workflow_id] = response[0]  # Take the first element if it's a list
-                else:
-                    results[workflow_id] = response  # Otherwise, store as-is
+                try:
+                    response = CLIENT2.run_workflow(
+                        workspace_name="trashdetection-eihzd",
+                        workflow_id=workflow_id,
+                        images={"image": frame},
+                        use_cache=True
+                    )
+                    if isinstance(response, list) and len(response) > 0:
+                        results[workflow_id] = response[0]  # Take the first element if it's a list
+                    else:
+                        results[workflow_id] = response  # Otherwise, store as-is
+                except Exception as e:
+                    print(f"Error calling NeuralOcean API: {e}")
+                    results[workflow_id] = {'predictions': []}
 
             # Combine the results from all models
             final_boxes = combine_results(yolo_results, seascanner_results, results)

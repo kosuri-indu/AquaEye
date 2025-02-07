@@ -11,7 +11,7 @@ import plotly.graph_objs as go
 
 # Define the layout for the detection page
 layout = html.Div([
-    html.H2("Underwater Debris Detection", style={'textAlign': 'center', 'marginTop': '8rem', 'marginBottom': '4rem', 'fontWeight': 'bold'}),
+    html.H2("Underwater Debris Detection", style={'textAlign': 'center', 'marginTop': '8rem', 'marginBottom': '3rem', 'fontWeight':'bold'}),
     
     # File Upload Component with plus symbol
     html.Div([
@@ -26,7 +26,7 @@ layout = html.Div([
                 'width': '60%', 'height': '15rem', 'lineHeight': '60px',
                 'borderWidth': '2px', 'borderStyle': 'dashed', 'borderRadius': '10px',  
                 'textAlign': 'center', 'margin': '0 auto', 'padding': '20px', 
-                'backgroundColor': '#333333', 'color': '#ffffff'
+                'backgroundColor': '#ffffff', 
             },
             multiple=False  # Allow only one file at a time
         ),
@@ -36,7 +36,7 @@ layout = html.Div([
     dcc.Store(id='stored-filename'),
     
     # Output section
-    html.Div(id='output-file-info', style={'marginTop': '20px', 'fontWeight': 'bold', 'textAlign': 'center', 'color': '#ffffff'}),
+    html.Div(id='output-file-info', style={'marginTop': '20px', 'fontWeight': 'bold', 'textAlign': 'center'}),
     
     # Display uploaded image or video
     html.Div(id='output-file-display', style={'marginTop': '20px', 'textAlign': 'center'}),
@@ -49,13 +49,14 @@ layout = html.Div([
         id='dashboard-container',
         children=[
             # Row 1
+                    html.H2("Insights Dashboard", style={'textAlign': 'center', 'width': '100%', 'marginBottom': '20px', 'color': '#ffffff', 'fontWeight': 'bold'}),  # New header for the dashboard
             html.Div(
                 children=[
                     # Individual object class count graph (conditionally displayed)
                     html.Div(
                         id='individual-class-graph-container',
                         children=[
-                            dcc.Graph(id='individual-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                            dcc.Graph(id='individual-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px','border': '2px solid #333333'})  
                         ],
                         style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
                     ),
@@ -64,7 +65,7 @@ layout = html.Div([
                     html.Div(
                         id='categorized-class-graph-container',
                         children=[
-                            dcc.Graph(id='categorized-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                            dcc.Graph(id='categorized-class-count-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px', 'border': '2px solid #333333'})
                         ],
                         style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
                     )
@@ -79,7 +80,7 @@ layout = html.Div([
                     html.Div(
                         id='gauge-container',
                         children=[
-                            dcc.Graph(id='safety-gauge', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                            dcc.Graph(id='safety-gauge', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px', 'border': '2px solid #333333'})
                         ],
                         style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
                     ),
@@ -88,9 +89,44 @@ layout = html.Div([
                     html.Div(
                         id='degradation-time-graph-container',
                         children=[
-                            dcc.Graph(id='degradation-time-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px'})
+                            dcc.Graph(id='degradation-time-graph', style={'width': '100%', 'borderRadius': '12px', 'boxShadow': '0 6px 12px rgba(0, 0, 0, 0.2)', 'backgroundColor': '#444444', 'padding': '10px', 'border': '2px solid #333333'})
                         ],
                         style={'width': '45%', 'margin': '20px', 'display': 'none', 'backgroundColor': '#444444', 'padding': '20px', 'borderRadius': '12px'}  # Initially hidden
+                    )
+                ],
+                style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
+            ),
+
+            # Row 3
+            html.Div(
+                children=[
+                    # Suggestions Button
+                    html.Div(
+                        children=[
+                            dbc.Button("Show Cleanup Suggestions", id="suggestions-button", color="primary", className="mr-2"),
+                        ],
+                        style={'width': '100%', 'textAlign': 'center', 'margin': '20px'}
+                    ),
+                    
+                    # Toggle Container for Cleanup Suggestions
+                    html.Div(
+                        id='suggestions-container',
+                        children=[
+                            dbc.Collapse(
+                                dbc.Card(dbc.CardBody([
+                                    html.H5("Basic Cleanup Suggestions", className="card-title"),
+                                    html.P("1. Always wear protective gloves and masks while handling debris."),
+                                    html.P("2. Use a grabber tool to pick up sharp or hazardous objects."),
+                                    html.P("3. Separate waste into categories: plastics, metals, and organic materials."),
+                                    html.P("4. Dispose of medical waste like gloves and masks in designated bins."),
+                                    html.P("5. Report large or hazardous debris to local authorities."),
+                                    html.P("6. Participate in community cleanup events."),
+                                    html.P("7. Educate others about the importance of keeping our waters clean.")
+                                ])),
+                                id="suggestions-collapse",
+                            )
+                        ],
+                        style={'width': '100%',  'margin': '20px'}
                     )
                 ],
                 style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
@@ -105,8 +141,8 @@ layout = html.Div([
 
 # Categories
 animals = ['coral', 'crab', 'dolphin', 'fish', 'jellyfish', 'narwhal', 'octopus', 'sea-horse', 'sea-turtle', 'seal', 'shark', 'shrimp', 'star-fish', 'sting-ray', 'whale']
-industrial_waste = ['can', 'cellphone', 'electronics', 'gbottle', 'glove', 'metal', 'misc', 'net', 'pbag', 'pbottle', 'plastic', 'rod', 'sunglasses', 'tire']
-plastic = ['pbottle', 'plastic', 'pbag', 'gbottle']
+industrial_waste = ['can', 'cellphone', 'electronics', 'gbottle', 'glove', 'metal', 'misc', 'net', 'rod', 'sunglasses', 'tire']
+plastic = ['pbottle', 'plastic', 'pbag', 'trash_plastic']
 medical_waste = ['glove', 'syringe', 'bandage', 'mask']  # New category for medical waste
 miscellaneous = ['sunglasses', 'rod', 'rare_item']  # Rare or miscellaneous items
 
@@ -205,10 +241,13 @@ def register_callbacks(app):
         categorized_figure = {'data': categorized_data, 'layout': go.Layout(title='Categorized Object Counts', paper_bgcolor='#444444', plot_bgcolor='#444444', font=dict(color='#ffffff'))}
 
         # Update image info to include total detections
-        image_info = f"Processing image: {filename}\nTotal detections: {total_detections*10}%"
+        image_info = f"Processing image: {filename}\n"
         # Calculate debris percentage
-        debris_percentage = min(total_detections * 10, 100)  # Ensure it doesn't exceed 100%
+        debris_count = sum(count for item, count in class_counts.items() if item not in animals)
 
+        max_percentage = 100 # or some other maximum value
+
+        debris_percentage = (debris_count / max_percentage) * 1000
         # Determine safety level
         if debris_percentage <= 30:
             safety_status = "Safe"
@@ -246,10 +285,21 @@ def register_callbacks(app):
         # Create degradation time bar chart
         degradation_data = []
         for item, count in class_counts.items():
+            if item not in degradation_times:
+                continue
             degradation_time = degradation_times.get(item, 0)
             degradation_data.append(go.Bar(x=[item], y=[degradation_time]))
         degradation_figure = {'data': degradation_data, 'layout': go.Layout(title='Degradation Time of Detected Items', paper_bgcolor='#444444', plot_bgcolor='#444444', font=dict(color='#ffffff'))}
 
         return image_info, display_component, individual_figure, categorized_figure, {'display': 'block'}, {'display': 'block'}, gauge_figure, {'display': 'block'}, degradation_figure, {'display': 'block'}  # Show all containers
 
+    @app.callback(
+        Output("suggestions-collapse", "is_open"),
+        [Input("suggestions-button", "n_clicks")],
+        [State("suggestions-collapse", "is_open")],
+    )
+    def toggle_suggestions(n_clicks, is_open):
+        if n_clicks:
+            return not is_open
+        return is_open
 # Ensure to register the callbacks in app.py
