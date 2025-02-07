@@ -20,7 +20,7 @@ navbar = dbc.Navbar(
         # Navigation links on the right
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink("The Problem", href="/problem")),  # Fixed href
+                dbc.NavItem(dbc.NavLink("The Problem", href="/")),  # Fixed href
                 dbc.NavItem(dbc.NavLink("Debris Detection", href="/detection")),
                 dbc.NavItem(dbc.NavLink("Education", href="/education")),
             ],
@@ -47,7 +47,7 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname == '/detection':
         return detection.layout
-    elif pathname == '/problem':
+    elif pathname == '/':
         return problem.layout  # Fixed problem page navigation
     elif pathname == '/education':
         return education.layout
