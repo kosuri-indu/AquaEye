@@ -1,8 +1,7 @@
 import dash_html_components as html
 
 layout = html.Div([
-    html.H1("Education"),
-    html.Img(src="/static/images/education_banner.png", style={'width': '100%', 'height': '500px'}),
+    html.Img(src="/static/images/education_banner.png", style={'width': '100%', 'height':'500px'}),
     html.Div(
         [
             html.P(

@@ -32,7 +32,7 @@ temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 
 # Load the YOLO model
-model = torch.hub.load('ultralytics/yolov5', 'custom', path='best_250_with_yolov5s.pt', force_reload=True)
+model = torch.hub.load('./yolov5', 'custom', path='best_250_with_yolov5s.pt', source='local')
 print("YOLO model loaded successfully.")
 
 # Define colors for different sources
