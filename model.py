@@ -73,13 +73,14 @@ def combine_results(yolo_results, seascanner_results, neuralocean_results):
 
     # Process SeaScanner results
     for seascanner_box in seascanner_results['predictions']:
-        combined_boxes.append({
-            'box': [seascanner_box['x'] - seascanner_box['width'] / 2, seascanner_box['y'] - seascanner_box['height'] / 2,
-                    seascanner_box['x'] + seascanner_box['width'] / 2, seascanner_box['y'] + seascanner_box['height'] / 2],
-            'conf': seascanner_box['confidence'],
-            'class': seascanner_box['class'],
-            'source': 'seascanner'
-        })
+        if seascanner_box['confidence'] > 0.45:
+            combined_boxes.append({
+                'box': [seascanner_box['x'] - seascanner_box['width'] / 2, seascanner_box['y'] - seascanner_box['height'] / 2,
+                        seascanner_box['x'] + seascanner_box['width'] / 2, seascanner_box['y'] + seascanner_box['height'] / 2],
+                'conf': seascanner_box['confidence'],
+                'class': seascanner_box['class'],
+                'source': 'seascanner'
+            })
 
     # Process NeuralOcean results with class mapping
     class_mapping = {"0": "trash_plastics", "1": "living_beings"}
@@ -105,11 +106,6 @@ def combine_results(yolo_results, seascanner_results, neuralocean_results):
 
     return final_boxes
 
-@sleep_and_retry
-@limits(calls=5, period=60)  # Adjust the rate limit as per your API plan
-def call_inference_api(client, *args, **kwargs):
-    return client.run_workflow(*args, **kwargs)
-
 def process_image(contents):
     # Decode the image
     content_type, content_string = contents.split(',')
@@ -130,7 +126,7 @@ def process_image(contents):
     # Run HTTP inference for SeaScanner model
     try:
         with CLIENT1.use_configuration(custom_configuration):
-            seascanner_results = call_inference_api(CLIENT1, temp_image_path, model_id="seascanner/3")
+            seascanner_results = CLIENT1.infer(temp_image_path, model_id="seascanner/3")
     except Exception as e:
         print(f"Error calling SeaScanner API: {e}")
         seascanner_results = {'predictions': []}
@@ -139,8 +135,7 @@ def process_image(contents):
     results = {}
     for workflow_id in ["neuralocean"]:
         try:
-            response = call_inference_api(
-                CLIENT2,
+            response = CLIENT2.run_workflow(
                 workspace_name="trashdetection-eihzd",
                 workflow_id=workflow_id,
                 images={"image": temp_image_path},
@@ -211,7 +206,7 @@ def process_video(contents, skip_frames=5):
             # Run HTTP inference for SeaScanner model
             try:
                 with CLIENT1.use_configuration(custom_configuration):
-                    seascanner_results = call_inference_api(CLIENT1, frame, model_id="seascanner/3")
+                    seascanner_results = CLIENT1.infer(frame, model_id="seascanner/3")
             except Exception as e:
                 print(f"Error calling SeaScanner API: {e}")
                 seascanner_results = {'predictions': []}
@@ -220,8 +215,7 @@ def process_video(contents, skip_frames=5):
             results = {}
             for workflow_id in ["neuralocean"]:
                 try:
-                    response = call_inference_api(
-                        CLIENT2,
+                    response = CLIENT2.run_workflow(
                         workspace_name="trashdetection-eihzd",
                         workflow_id=workflow_id,
                         images={"image": frame},

@@ -95,6 +95,41 @@ layout = html.Div([
                     )
                 ],
                 style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
+            ),
+
+            # Row 3
+            html.Div(
+                children=[
+                    # Suggestions Button
+                    html.Div(
+                        children=[
+                            dbc.Button("Show Cleanup Suggestions", id="suggestions-button", color="primary", className="mr-2"),
+                        ],
+                        style={'width': '100%', 'textAlign': 'center', 'margin': '20px'}
+                    ),
+                    
+                    # Toggle Container for Cleanup Suggestions
+                    html.Div(
+                        id='suggestions-container',
+                        children=[
+                            dbc.Collapse(
+                                dbc.Card(dbc.CardBody([
+                                    html.H5("Basic Cleanup Suggestions", className="card-title"),
+                                    html.P("1. Always wear protective gloves and masks while handling debris."),
+                                    html.P("2. Use a grabber tool to pick up sharp or hazardous objects."),
+                                    html.P("3. Separate waste into categories: plastics, metals, and organic materials."),
+                                    html.P("4. Dispose of medical waste like gloves and masks in designated bins."),
+                                    html.P("5. Report large or hazardous debris to local authorities."),
+                                    html.P("6. Participate in community cleanup events."),
+                                    html.P("7. Educate others about the importance of keeping our waters clean.")
+                                ])),
+                                id="suggestions-collapse",
+                            )
+                        ],
+                        style={'width': '100%',  'margin': '20px'}
+                    )
+                ],
+                style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap'}
             )
         ],
         style={'display': 'flex', 'justifyContent': 'center', 'flexWrap': 'wrap', 'backgroundColor': '#333333', 'padding': '20px', 'borderRadius': '12px'}
@@ -106,8 +141,8 @@ layout = html.Div([
 
 # Categories
 animals = ['coral', 'crab', 'dolphin', 'fish', 'jellyfish', 'narwhal', 'octopus', 'sea-horse', 'sea-turtle', 'seal', 'shark', 'shrimp', 'star-fish', 'sting-ray', 'whale']
-industrial_waste = ['can', 'cellphone', 'electronics', 'gbottle', 'glove', 'metal', 'misc', 'net', 'pbag', 'pbottle', 'plastic', 'rod', 'sunglasses', 'tire']
-plastic = ['pbottle', 'plastic', 'pbag', 'gbottle']
+industrial_waste = ['can', 'cellphone', 'electronics', 'gbottle', 'glove', 'metal', 'misc', 'net', 'rod', 'sunglasses', 'tire']
+plastic = ['pbottle', 'plastic', 'pbag', 'trash_plastic']
 medical_waste = ['glove', 'syringe', 'bandage', 'mask']  # New category for medical waste
 miscellaneous = ['sunglasses', 'rod', 'rare_item']  # Rare or miscellaneous items
 
@@ -258,4 +293,13 @@ def register_callbacks(app):
 
         return image_info, display_component, individual_figure, categorized_figure, {'display': 'block'}, {'display': 'block'}, gauge_figure, {'display': 'block'}, degradation_figure, {'display': 'block'}  # Show all containers
 
+    @app.callback(
+        Output("suggestions-collapse", "is_open"),
+        [Input("suggestions-button", "n_clicks")],
+        [State("suggestions-collapse", "is_open")],
+    )
+    def toggle_suggestions(n_clicks, is_open):
+        if n_clicks:
+            return not is_open
+        return is_open
 # Ensure to register the callbacks in app.py
