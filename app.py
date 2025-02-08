@@ -55,10 +55,7 @@ def display_page(pathname):
     elif pathname == '/video':
         return video.layout
     else:
-        return html.Div([
-            html.H1("Home"),
-            html.P("Welcome to AquaEye.")
-        ])
+        return problem.layout  # Default to problem page
 
 detection.register_callbacks(app)
 video.register_callbacks(app)  # Register video callbacks
