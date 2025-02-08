@@ -11,7 +11,7 @@ import plotly.graph_objs as go
 
 # Define the layout for the detection page
 layout = html.Div([
-    html.H2("Underwater Debris Detection", style={'textAlign': 'center', 'marginTop': '8rem', 'marginBottom': '3rem', 'fontWeight':'bold'}),
+    html.H2("Underwater Debris Image Detection", style={'textAlign': 'center', 'marginTop': '4rem', 'marginBottom': '3rem', 'fontWeight':'bold'}),
     
     # File Upload Component with plus symbol
     html.Div([
@@ -114,14 +114,33 @@ layout = html.Div([
                         children=[
                             dbc.Collapse(
                                 dbc.Card(dbc.CardBody([
-                                    html.H5("Basic Cleanup Suggestions", className="card-title"),
-                                    html.P("1. Always wear protective gloves and masks while handling debris."),
-                                    html.P("2. Use a grabber tool to pick up sharp or hazardous objects."),
-                                    html.P("3. Separate waste into categories: plastics, metals, and organic materials."),
-                                    html.P("4. Dispose of medical waste like gloves and masks in designated bins."),
-                                    html.P("5. Report large or hazardous debris to local authorities."),
-                                    html.P("6. Participate in community cleanup events."),
-                                    html.P("7. Educate others about the importance of keeping our waters clean.")
+                                    html.H5("Safe Cleanup Suggestions", className="card-title"),
+    html.P("1. Wear protective gloves and masks while handling debris."),
+    html.P("2. Use a grabber tool to pick up lightweight trash like paper and plastic."),
+    html.P("3. Participate in organized cleanup events with proper supervision."),
+    html.P("4. Separate waste into recyclables and non-recyclables."),
+    html.P("5. Educate others on waste disposal and environmental conservation."),
+
+    html.H5("Medium Risk Cleanup Suggestions", className="card-title"),
+    html.P("1. Use thicker gloves and sturdy shoes to avoid cuts and punctures."),
+    html.P("2. Handle small amounts of broken glass or metal carefully using tools."),
+    html.P("3. Avoid wading into water without proper gear."),
+    html.P("4. Ensure that you are working in a well-lit and stable area."),
+    html.P("5. Carry a first aid kit in case of minor injuries."),
+
+    html.H5("Unsafe Cleanup Suggestions (Requires Caution)", className="card-title"),
+    html.P("1. Do not attempt to remove large or deeply embedded debris alone."),
+    html.P("2. Avoid handling sharp, rusted, or unknown metal objects directly."),
+    html.P("3. Stay clear of unstable structures or heavily polluted areas."),
+    html.P("4. Be cautious of wildlife that may be hiding under debris."),
+    html.P("5. Work in pairs when dealing with heavier or bulkier waste items."),
+
+    html.H5("Hazardous Cleanup Suggestions (Requires Authorities)", className="card-title"),
+    html.P("1. Do not touch hazardous materials such as oil spills, chemicals, or medical waste."),
+    html.P("2. Report large debris or biohazards (e.g., syringes, contaminated waste) to local authorities."),
+    html.P("3. Avoid areas with strong odors, discoloration, or toxic fumes."),
+    html.P("4. If a cleanup involves industrial waste, seek guidance from professionals."),
+    html.P("5. Wear full protective gear (respirator, coveralls, gloves) if required by emergency teams.")
                                 ])),
                                 id="suggestions-collapse",
                             )
@@ -182,6 +201,7 @@ def register_callbacks(app):
         ext = os.path.splitext(filename)[1].lower()
         file_type = ""
         display_component = None
+        final_boxes = []  # Initialize final_boxes as an empty list
         
         if ext in ['.jpg', '.jpeg', '.png']:
             file_type = "Image"
@@ -195,11 +215,15 @@ def register_callbacks(app):
         elif ext in ['.mp4']:
             file_type = "Video"
             try:
-                processed_video_path = process_video(contents, skip_frames=5)  # Adjust skip_frames as needed
+                processed_video_path, frames = process_video(contents, skip_frames=5)  # Adjust skip_frames as needed
                 with open(processed_video_path, 'rb') as f:
                     video_encoded = base64.b64encode(f.read()).decode('utf-8')
                 video_src = f'data:video/mp4;base64,{video_encoded}'
                 display_component = html.Video(src=video_src, controls=True, style={'maxWidth': '100%', 'height': 'auto', 'maxHeight': '500px'})
+                
+                # Print frames
+                for i, frame in enumerate(frames):
+                    print(f"Frame {i}: {frame}")
             except ValueError as e:
                 return str(e), "", go.Figure(), go.Figure(), {'display': 'none'}, {'display': 'none'}, go.Figure(), {'display': 'none'}, go.Figure(), {'display': 'none'}  # Hide all containers
         else:

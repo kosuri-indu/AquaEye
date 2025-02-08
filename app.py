@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output
-from pages import detection, education, problem  # Import problem module
+from pages import detection, education, problem, video  # Import problem module
 
 # Initialize the app with a Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
@@ -21,7 +21,8 @@ navbar = dbc.Navbar(
         dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("The Problem", href="/")),  # Fixed href
-                dbc.NavItem(dbc.NavLink("Debris Detection", href="/detection")),
+                dbc.NavItem(dbc.NavLink("Image Detection", href="/detection")),
+                dbc.NavItem(dbc.NavLink("Video Detection", href="/video")),
                 dbc.NavItem(dbc.NavLink("Education", href="/education")),
             ],
             className="ms-auto",  # Pushes items to the right
@@ -51,6 +52,8 @@ def display_page(pathname):
         return problem.layout  # Fixed problem page navigation
     elif pathname == '/education':
         return education.layout
+    elif pathname == '/video':
+        return video.layout
     else:
         return html.Div([
             html.H1("Home"),
@@ -58,6 +61,7 @@ def display_page(pathname):
         ])
 
 detection.register_callbacks(app)
+video.register_callbacks(app)  # Register video callbacks
 
 if __name__ == '__main__':
     app.run_server(debug=True)
