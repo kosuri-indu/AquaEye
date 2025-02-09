@@ -5,14 +5,11 @@
     <img src="https://github.com/user-attachments/assets/cf2e3094-09a9-454e-aa76-e1d3f62c1eac" width="45%" height="250px" style="object-fit: cover;">
 </p>
 
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/5554bbbb-a68b-4cdd-8587-53b35d67ea3b" width="35%" height="250px" style="object-fit: cover;">
-    <img src="https://github.com/user-attachments/assets/e6c3879e-9b61-45a7-bac4-79ebfe2b2efc" width="55%" height="250px" style="object-fit: cover;">
-</p>
-
 ## Overview  
 
 Managing waste effectively in aquatic systems is crucial for preserving marine life, ecosystems, and biodiversity. **Aquaeye** uses deep learning techniques to detect and classify submerged debris, including marine life thereby promoting a cleaner and more sustainable environment.  
+
+We presented this idea in the **PALS Innowah! Hackathon 2024-45** and reached the **PreFinals**, showcasing the potential impact of Aquaeye in addressing underwater pollution.
 
 ## What Aquaeye Does  
 
