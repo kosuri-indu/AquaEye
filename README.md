@@ -1,8 +1,8 @@
 # Aquaeye: Detecting Debris Pollution in Aquatic Systems  
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/8918405f-55c9-4299-9655-64c3efdf0d04" width="45%" height="250px" style="object-fit: cover;">
-    <img src="https://github.com/user-attachments/assets/cf2e3094-09a9-454e-aa76-e1d3f62c1eac" width="45%" height="250px" style="object-fit: cover;">
+    <img src="https://github.com/user-attachments/assets/8918405f-55c9-4299-9655-64c3efdf0d04" width="49%" height="250px" style="object-fit: cover;">
+    <img src="https://github.com/user-attachments/assets/cf2e3094-09a9-454e-aa76-e1d3f62c1eac" width="49%" height="250px" style="object-fit: cover;">
 </p>
 
 ## Overview  
