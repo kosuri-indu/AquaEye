@@ -33,7 +33,7 @@ We presented this idea in the **PALS Innowah! Hackathon 2024-45** and reached th
 
 ## Workflow
 
-![WhatsApp Image 2025-02-08 at 09 31 39_dbeb3372](https://github.com/user-attachments/assets/8977f0fd-4a72-4354-b9f6-c9b047b1a1a8)
+![workflow](https://github.com/user-attachments/assets/91ab045d-fc18-48b0-b9b4-330906752464)
 
 
 ## How We Are Building It  
