@@ -1,4 +1,4 @@
-from dash import html, dcc
+from dash import html
 
 layout = html.Div([
     # Video container with text overlay and gradient

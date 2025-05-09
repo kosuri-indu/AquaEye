@@ -1,6 +1,6 @@
 # model.py
 
-import time
+# import time
 import base64
 import pathlib
 import cv2
@@ -10,7 +10,7 @@ import numpy as np
 from inference_sdk import InferenceHTTPClient, InferenceConfiguration
 import os
 import dotenv
-from ratelimit import limits, sleep_and_retry
+# from ratelimit import limits, sleep_and_retry
 
 # Load the environment variables
 dotenv.load_dotenv()

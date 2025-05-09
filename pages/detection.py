@@ -1,7 +1,7 @@
 # pages/detection.py
 
 import cv2
-import dash
+# import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Output, Input, State
 import os
