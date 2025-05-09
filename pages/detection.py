@@ -9,6 +9,7 @@ import base64
 from model import process_image, process_video
 import plotly.graph_objs as go
 
+
 # Define the layout for the detection page
 layout = html.Div([
     html.H2("Underwater Debris Image Detection", style={'textAlign': 'center', 'marginTop': '4rem', 'marginBottom': '3rem', 'fontWeight':'bold'}),

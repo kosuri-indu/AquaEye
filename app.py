@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output
-from pages import detection, education, problem, video  # Import problem module
+from pages import detection, video, education, problem  
 
 # Initialize the app with a Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
