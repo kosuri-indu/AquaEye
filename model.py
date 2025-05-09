@@ -57,7 +57,7 @@ def iou(box1, box2):
     return inter_area / union_area if union_area > 0 else 0
 
 # Combine results from multiple models
-def combine_results(yolo_results, marinespecies_results, seascanner_results, neuralocean_results):
+def combine_results(yolo_results, seascanner_results, neuralocean_results):
     combined_boxes = []
 
     # Process YOLO results
@@ -79,16 +79,6 @@ def combine_results(yolo_results, marinespecies_results, seascanner_results, neu
                         seascanner_box['x'] + seascanner_box['width'] / 2, seascanner_box['y'] + seascanner_box['height'] / 2],
                 'conf': seascanner_box['confidence'],
                 'class': seascanner_box['class'],
-                'source': 'seascanner'
-            })
-
-    for marine_box in marinespecies_results['predictions']:
-        if marine_box['confidence'] > 0.75:
-            combined_boxes.append({
-                'box': [marine_box['x'] - marine_box['width'] / 2, marine_box['y'] - marine_box['height'] / 2,
-                        marine_box['x'] + marine_box['width'] / 2, marine_box['y'] + marine_box['height'] / 2],
-                'conf': marine_box['confidence'],
-                'class': marine_box['class'],
                 'source': 'seascanner'
             })
 
@@ -137,7 +127,6 @@ def process_image(contents):
     try:
         with CLIENT1.use_configuration(custom_configuration):
             seascanner_results = CLIENT1.infer(temp_image_path, model_id="seascanner/3")
-            marinespecies_results = CLIENT1.infer(temp_image_path, model_id="underwater-marine-species/6")
 
     except Exception as e:
         print(f"Error calling SeaScanner API: {e}")
@@ -162,7 +151,7 @@ def process_image(contents):
             results[workflow_id] = {'predictions': []}
 
     # Combine the results from all models
-    final_boxes = combine_results(yolo_results, marinespecies_results, seascanner_results, results)
+    final_boxes = combine_results(yolo_results, seascanner_results, results)
 
     # Draw the combined results on the image
     for box in final_boxes:
@@ -219,7 +208,6 @@ def process_video(contents, skip_frames=5):
             try:
                 with CLIENT1.use_configuration(custom_configuration):
                     seascanner_results = CLIENT1.infer(frame, model_id="seascanner/3")
-                    marinespecies_results = CLIENT1.infer(frame, model_id="underwater-marine-species/6")
             except Exception as e:
                 print(f"Error calling SeaScanner API: {e}")
                 seascanner_results = {'predictions': []}
