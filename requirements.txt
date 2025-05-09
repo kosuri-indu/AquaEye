@@ -7,3 +7,4 @@ inference_sdk
 python-dotenv
 numpy
 torch
+  
